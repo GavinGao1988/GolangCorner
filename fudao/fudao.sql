@@ -1,11 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.8.5
--- https://www.phpmyadmin.net/
---
--- 主机： 127.0.0.1
--- 生成日期： 2020-03-12 00:19:08
--- 服务器版本： 5.7.25
--- PHP 版本： 7.1.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -38,8 +30,10 @@ CREATE TABLE `fudao` (
   `title` varchar(255) NOT NULL COMMENT '标题',
   `url` varchar(255) NOT NULL,
   `teacher` varchar(64) NOT NULL COMMENT '教师姓名',
-  `price` int(11) NOT NULL
+  `price` int(11) NOT NULL,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 
 --
 -- 转储表的索引
@@ -60,7 +54,7 @@ ALTER TABLE `fudao`
 -- 使用表AUTO_INCREMENT `fudao`
 --
 ALTER TABLE `fudao`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
