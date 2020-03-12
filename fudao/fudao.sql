@@ -43,8 +43,7 @@ CREATE TABLE `fudao` (
 -- 表的索引 `fudao`
 --
 ALTER TABLE `fudao`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `ke_id` (`ke_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- 在导出的表使用AUTO_INCREMENT
