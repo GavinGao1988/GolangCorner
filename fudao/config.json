@@ -1,0 +1,7 @@
+{
+  "dbhost": "localhost",
+  "dbport": 3306,
+  "dbusername": "root",
+  "dbpwd": "123",
+  "dbname": "fudao"
+}

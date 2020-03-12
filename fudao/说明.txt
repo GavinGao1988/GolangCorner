@@ -1,0 +1,7 @@
+﻿mysql 数据库连接库:
+   
+ "database/sql"
+    "github.com/go-sql-driver/mysql"
+
+爬虫库:
+    "github.com/gocolly/colly"
