@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="cn_zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <title>腾讯辅导</title>
+</head>
+
+<body>
+    <div id="example-1">
+        <table style="width: 100%;">
+            <template v-for="(value,key,index) in m_class">
+                <template v-if="index == page_index">
+                    <tr>
+                        <td colspan="3">
+                            <button  type="text" @click="page_up(index,key)">上一页</button>
+                            {{ key }}
+                            <button  type="text" @click="page_down(index,key)">下一页</button>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>年级</th>
+                        <th>学科</th>
+                        <th>课程数</th>
+                    </tr>
+                    <template v-for="item in value">
+                        <tr>
+                            <td> {{ item.grade }} </td>
+                            <td> {{ item.class }} </td>
+                            <td> 
+                                {{ item.count }} 
+                                <button type="text" @click="show_sub_class(item.grade, item.class, key)">详情</button>
+                            </td>
+                        </tr>
+                    </template>
+                </template>
+            </template>
+        </table>
+
+        <table style="width: 100%;">
+            <tr>
+                <th>id</th>
+                <th>课程 ID</th>
+                <th>年级</th>
+                <th>学科</th>
+                <th>标题</th>
+                <th>教师</th>
+                <th>价格</th>
+                <th>URL</th>
+            </tr>
+            <tr v-for="item in sub_class">
+                <td>{{ item.id }}</td>
+                <td>{{ item.ke_id }}</td>
+                <td>{{ item.grade }}</td>
+                <td>{{ item.class }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.teacher }}</td>
+                <td>{{ item.price }}</td>
+                <td><a :href="item.url" target="_black">{{ item.url }}</a></td>
+            </tr>
+        </table>
+
+    </div>
+
+</body>
+
+<style>
+    table,
+    table tr th,
+    table tr td {
+        border: 1px solid #0094ff;
+
+    }
+
+    th {
+        color: red;
+    }
+
+    table {
+        width: 200px;
+        min-height: 25px;
+        line-height: 25px;
+        text-align: center;
+        border-collapse: collapse;
+        word-wrap: break-word;
+        word-break: break-all;
+    }
+</style>
+
+<script>
+    // console.log("script start")
+
+    var example1 = new Vue({
+        el: '#example-1',
+        data: {
+            items: [],
+            // 日期 : {年级,课程,数量}
+            m_class: {},
+            sub_class: [],
+            page_index: 0
+        },
+        methods: {
+            page_down: function(index, date){
+
+                console.log(this.m_class[date].length)
+                console.log(index+1)
+                if( this.m_class[date].length > index+1){
+                    alert("这是最后一页了哟")
+                    return
+                }
+                this.page_index += 1
+            },
+            page_up: function(index, date){
+                if( index-1 < 0 ){
+                    alert("这是最后一页了哟")
+                    return
+                }
+
+                this.page_index -= 1
+            },
+            show_sub_class: function (grade, t_class, date) {
+                // console.log(grade,t_class, key)
+                let tempArr = []
+
+                let items = this.items
+
+                for (let index = 0; index < items.length; index++) {
+                    let element = items[index]
+
+                    let item_date = element["create_time"].substring(0, 10)
+                    if ( element["grade"] == grade && element["class"] == t_class && item_date == date){
+                        tempArr.push(element)
+                    }
+                }
+                this.sub_class = tempArr
+            },
+            setData: function (list) {
+                this.items = list
+            },
+            setClassCount: function (curr_count) {
+
+                let sum = 0
+                
+                for (let date in this.m_class){
+                    for (let index = 0; index < this.m_class[date].length; index++) {
+                        sum +=  this.m_class[date]["count"]
+                    }
+                }
+                
+                // 如果当前课程总数 等于 本次传输的 item 数; 返回
+                if (sum == curr_count) return;
+
+
+                var tempArr = []
+                var tempDict = {}
+                let m_items = this.items
+
+                for (let index = 0; index < m_items.length; index++) {
+                    
+                    
+                    let date = m_items[index]["create_time"].substring(0, 10)
+
+                    if ( !(date in tempDict) ) {
+                        tempDict[date] = []
+                    }
+                    
+                    let is_find = false
+
+                    for (let i = 0; i < tempDict[date].length; i++) {
+                        if ( tempDict[date][i]["grade"] == m_items[index]["grade"] && tempDict[date][i]["class"] == m_items[index]["class"] ) {
+                            tempDict[date][i]["count"] += 1
+                            is_find = true
+                        }
+                    }
+
+                    if ( !is_find ){
+                        tempDict[date].push({
+                            "grade": m_items[index]["grade"],
+                            "class": m_items[index]["class"],
+                            "count": 1
+                        })
+                    }
+                }
+
+                this.m_class = tempDict
+            }
+        },
+    })
+
+    $(document).ready();
+
+    window.setInterval(function () {
+        $.ajax({
+            url: "http://127.0.0.1:8887/",
+            data: {
+                id: '0',
+            },
+            type: "POST",
+            dataType: "json",
+        }).done(function (json) {
+            example1.setData(json)
+
+            example1.setClassCount(json.length)
+
+            console.log(json)
+        })
+        // .fail(function (xhr, status, errorThrown) {
+        //     console.log("Error: " + errorThrown);
+        //     console.log("Status: " + status);
+        // }).always(function (xhr, status) {
+        //     console.log("The request is complete!");
+        // });
+    }, 2000)
+</script>
+</html>
