@@ -106,9 +106,10 @@
         methods: {
             page_down: function(index, date){
 
-                console.log(this.m_class[date].length)
+                console.log(Object.keys(this.m_class).length)
                 console.log(index+1)
-                if( this.m_class[date].length > index+1){
+                
+                if( Object.keys(this.m_class).length <= index+1){
                     alert("这是最后一页了哟")
                     return
                 }
@@ -116,7 +117,7 @@
             },
             page_up: function(index, date){
                 if( index-1 < 0 ){
-                    alert("这是最后一页了哟")
+                    alert("这已经是第一页了哟")
                     return
                 }
 
@@ -195,7 +196,7 @@
 
     window.setInterval(function () {
         $.ajax({
-            url: "http://127.0.0.1:8887/",
+            url: "http://118.24.72.181:8887/",
             data: {
                 id: '0',
             },
